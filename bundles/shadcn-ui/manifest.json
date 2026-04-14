@@ -1,0 +1,17 @@
+{
+  "library": {
+    "id": "shadcn-ui",
+    "name": "shadcn/ui",
+    "version": "0.9",
+    "description": "Beautifully designed components built with Radix UI and Tailwind CSS",
+    "sourceUrl": "https://ui.shadcn.com"
+  },
+  "docs": {
+    "baseDir": "docs",
+    "format": "markdown",
+    "structure": [
+      { "glob": "components/**/*.md", "category": "Components" },
+      { "glob": "*.md", "category": "Guide" }
+    ]
+  }
+}

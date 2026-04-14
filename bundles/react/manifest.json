@@ -1,0 +1,16 @@
+{
+  "library": {
+    "id": "react",
+    "name": "React",
+    "version": "19.1",
+    "description": "A JavaScript library for building user interfaces",
+    "sourceUrl": "https://react.dev"
+  },
+  "docs": {
+    "baseDir": "docs",
+    "format": "markdown",
+    "structure": [
+      { "glob": "**/*.md", "category": "Guide" }
+    ]
+  }
+}

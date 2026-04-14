@@ -1,0 +1,46 @@
+{
+  "name": "molicore-mcp",
+  "version": "1.0.0",
+  "description": "Enterprise-ready offline MCP server for framework documentation",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "molicore": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "serve": "node dist/index.js --stdio",
+    "cli": "node dist/cli.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "lint": "eslint src/ tests/",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "mcp",
+    "documentation",
+    "offline",
+    "enterprise"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "better-sqlite3": "^12.9.0",
+    "commander": "^14.0.3",
+    "glob": "^13.0.6",
+    "marked": "^18.0.0",
+    "sqlite-vec": "^0.1.9",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.6.0",
+    "eslint": "^10.2.0",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.4"
+  }
+}

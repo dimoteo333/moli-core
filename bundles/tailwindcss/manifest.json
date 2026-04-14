@@ -1,0 +1,16 @@
+{
+  "library": {
+    "id": "tailwindcss",
+    "name": "Tailwind CSS",
+    "version": "4.0",
+    "description": "A utility-first CSS framework for rapidly building custom designs",
+    "sourceUrl": "https://tailwindcss.com"
+  },
+  "docs": {
+    "baseDir": "docs",
+    "format": "markdown",
+    "structure": [
+      { "glob": "**/*.md", "category": "Guide" }
+    ]
+  }
+}
