@@ -1,0 +1,16 @@
+{
+  "library": {
+    "id": "websquare",
+    "name": "WebSquare",
+    "version": "5.0",
+    "description": "Enterprise web UI framework by Inswave Systems with XML-based page structure, data binding, and rich UI components",
+    "sourceUrl": "https://docs.inswave.com"
+  },
+  "docs": {
+    "baseDir": "docs",
+    "format": "markdown",
+    "structure": [
+      { "glob": "**/*.md", "category": "Guide" }
+    ]
+  }
+}
