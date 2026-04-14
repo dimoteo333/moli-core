@@ -130,9 +130,16 @@ program
 program
   .command('serve')
   .description('Start the MCP server')
-  .option('--stdio', 'Use stdio transport (default)')
-  .action(async () => {
-    // Delegate to index.ts
+  .option('--stdio', 'Use stdio transport')
+  .option('--http', 'Use HTTP transport')
+  .option('--port <port>', 'HTTP port (default: 3000)', '3000')
+  .option('--host <host>', 'HTTP host (default: 0.0.0.0)', '0.0.0.0')
+  .action(async (opts: { stdio?: boolean; http?: boolean; port: string; host: string }) => {
+    if (opts.http) {
+      process.env.MOLICORE_TRANSPORT = 'http';
+      process.env.MOLICORE_PORT = opts.port;
+      process.env.MOLICORE_HOST = opts.host;
+    }
     await import('./index.js');
   });
 

@@ -12,6 +12,9 @@ export interface MoliCoreConfig {
   ftsWeight: number;
   vecWeight: number;
   logLevel: 'debug' | 'info' | 'warn' | 'error';
+  transport: 'stdio' | 'http';
+  port: number;
+  host: string;
 }
 
 function envStr(key: string, fallback: string): string {
@@ -53,6 +56,9 @@ export function loadConfig(overrides?: Partial<MoliCoreConfig>): MoliCoreConfig 
     ftsWeight: envFloat('MOLICORE_FTS_WEIGHT', 1.0),
     vecWeight: envFloat('MOLICORE_VEC_WEIGHT', 1.0),
     logLevel: envStr('MOLICORE_LOG_LEVEL', 'info') as MoliCoreConfig['logLevel'],
+    transport: envStr('MOLICORE_TRANSPORT', 'stdio') as MoliCoreConfig['transport'],
+    port: envInt('MOLICORE_PORT', 3000),
+    host: envStr('MOLICORE_HOST', '0.0.0.0'),
     ...overrides,
   };
 }

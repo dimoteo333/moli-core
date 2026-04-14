@@ -1,213 +1,141 @@
 # MoliCore MCP Server
 
-Enterprise-ready, offline-first MCP (Model Context Protocol) server for serving framework documentation to AI coding agents.
+오프라인 우선 MCP(Model Context Protocol) 서버 — AI 코딩 에이전트에게 프레임워크 문서를 제공합니다.
 
-## Features
+## 특징
 
-- **Fully offline** - No external API calls at runtime
-- **Hybrid search** - FTS5 keyword search + optional vector semantic search with RRF fusion
-- **AI-optimized output** - Structured, concise, version-aware context packages
-- **Extensible** - Add any framework via documentation bundles
-- **MCP-native** - Tools, resources, and prompt templates
+- **완전 오프라인** — 런타임에 외부 API 호출 없음
+- **하이브리드 검색** — FTS5 키워드 검색 + 옵션 벡터 시맨틱 검색 (RRF 퓨전)
+- **AI 최적화 출력** — 구조화되고 간결한, 버전 인식 컨텍스트 패키지
+- **확장 가능** — 문서 번들로 임의 프레임워크 추가 가능
+- **MCP 네이티브** — Tools, Resources, Prompt 템플릿 지원
+- **원격 접속 지원** — stdio 및 Streamable HTTP Transport 지원
 
-### Supported Frameworks (Initial)
+## 지원 프레임워크
 
-- React
-- shadcn/ui
-- Tailwind CSS
+| 라이브러리 | 버전 | 청크 수 |
+|-----------|------|---------|
+| React | 19.1 | 255 |
+| shadcn/ui | 0.9 | 219 |
+| Tailwind CSS | 4.0 | 275 |
+| WebSquare | 5.0 | 156 |
 
-## Quick Start
-
-### 1. Install
+## 설치 및 빌드
 
 ```bash
 npm install
 npm run build
 ```
 
-### 2. Create a Documentation Bundle
-
-Create a directory with a `manifest.json`:
-
-```json
-{
-  "library": {
-    "id": "react",
-    "name": "React",
-    "version": "19.1",
-    "description": "A JavaScript library for building user interfaces",
-    "sourceUrl": "https://react.dev"
-  },
-  "docs": {
-    "baseDir": "docs",
-    "format": "markdown",
-    "structure": [
-      { "glob": "**/*.md", "category": "Guide" }
-    ]
-  }
-}
-```
-
-Place your markdown documentation files in the `docs/` subdirectory.
-
-### 3. Import Documentation
+## 문서 번들 가져오기
 
 ```bash
+# 전체 번들 import (임베딩 제외)
+npx molicore import ./bundles/react --no-embeddings
+npx molicore import ./bundles/shadcn-ui --no-embeddings
+npx molicore import ./bundles/tailwindcss --no-embeddings
+npx molicore import ./bundles/websquare --no-embeddings
+
+# 임베딩 포함 import (transformers 필요)
 npx molicore import ./bundles/react
+
+# 등록된 라이브러리 확인
+npx molicore list
+
+# 문서 검색
+npx molicore search "useState 훅 사용법" --library react
 ```
 
-### 4. Start the MCP Server
+## 서버 실행
+
+### stdio 모드 (로컬 에이전트용)
 
 ```bash
 npx molicore serve --stdio
 ```
 
-### 5. Configure Your AI Client
-
-Add to your Claude Code MCP settings:
+Claude Code MCP 설정:
 
 ```json
 {
   "mcpServers": {
     "molicore": {
       "command": "node",
-      "args": ["path/to/molicore-mcp/dist/index.js"],
+      "args": ["path/to/moli-core/dist/cli.js", "serve", "--stdio"],
       "env": {
-        "MOLICORE_DB_PATH": "path/to/data/molicore.db"
+        "MOLICORE_DB_PATH": "path/to/moli-core/data/molicore.db"
       }
     }
   }
 }
 ```
 
-## CLI Commands
+### HTTP 모드 (원격 팀 공유용)
 
-| Command | Description |
-|---------|-------------|
-| `molicore import <dir>` | Import a documentation bundle |
-| `molicore import <dir> --no-embeddings` | Import without generating embeddings |
-| `molicore list` | List all imported libraries |
-| `molicore search <query> --library <id>` | Search documentation |
-| `molicore serve --stdio` | Start MCP server |
-
-## MCP Tools
-
-| Tool | Description |
-|------|-------------|
-| `list_libraries` | List all available libraries |
-| `resolve_library` | Resolve a name/alias to canonical library ID |
-| `list_topics` | List sections for a library |
-| `search_docs` | Hybrid search with filters |
-| `get_doc_section` | Get full section content |
-| `get_relevant_context` | AI-friendly context package for a task |
-
-## MCP Resources
-
-Access documentation sections via URI:
-
-```
-docs://react/19.1/hooks/use-state
-docs://tailwindcss/4.0/utilities/flex
-docs://shadcn-ui/0.9/components/button
+```bash
+npx molicore serve --http --port 3000 --host 0.0.0.0
 ```
 
-## MCP Prompts
-
-| Prompt | Description |
-|--------|-------------|
-| `find-implementation-guidance` | Step-by-step implementation help |
-| `summarize-framework-topic` | Topic summary |
-| `compare-two-approaches` | Compare two approaches |
-| `extract-best-practices` | Extract best practices |
-
-## Configuration
-
-All configuration via environment variables:
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `MOLICORE_DB_PATH` | `./data/molicore.db` | Database file path |
-| `MOLICORE_MODELS_DIR` | `./data/models` | Embedding models directory |
-| `MOLICORE_EMBEDDINGS_ENABLED` | `true` | Enable/disable vector search |
-| `MOLICORE_EMBEDDING_MODEL` | `Xenova/all-MiniLM-L6-v2` | HuggingFace model name |
-| `MOLICORE_CHUNK_MAX_TOKENS` | `512` | Max tokens per chunk |
-| `MOLICORE_CHUNK_OVERLAP_TOKENS` | `64` | Overlap between chunks |
-| `MOLICORE_LOG_LEVEL` | `info` | Logging level |
-
-## Adding New Frameworks
-
-1. Create a bundle directory with `manifest.json` + docs
-2. Run `molicore import ./bundles/new-framework`
-3. No code changes needed
-
-### Bundle Manifest Schema
+MCP 클라이언트 설정:
 
 ```json
 {
-  "library": {
-    "id": "lowercase-with-hyphens",
-    "name": "Display Name",
-    "version": "1.0",
-    "description": "Optional description",
-    "sourceUrl": "https://example.com"
-  },
-  "docs": {
-    "baseDir": "docs",
-    "format": "markdown",
-    "structure": [
-      { "glob": "guide/**/*.md", "category": "Guide" },
-      { "glob": "api/**/*.md", "category": "API Reference" }
-    ]
+  "mcpServers": {
+    "molicore": {
+      "url": "http://서버주소:3000/mcp"
+    }
   }
 }
 ```
 
-### Supported Doc Formats
+#### 환경변수
 
-- **Markdown** (`.md`) - Primary format
-- **HTML** - Planned for future
+| 변수 | 기본값 | 설명 |
+|------|--------|------|
+| `MOLICORE_TRANSPORT` | `stdio` | 전송 방식 (`stdio` / `http`) |
+| `MOLICORE_PORT` | `3000` | HTTP 포트 |
+| `MOLICORE_HOST` | `0.0.0.0` | HTTP 바인드 호스트 |
+| `MOLICORE_DB_PATH` | `./data/molicore.db` | SQLite DB 경로 |
+| `MOLICORE_EMBEDDINGS_ENABLED` | `true` | 임베딩 검색 활성화 |
+| `MOLICORE_LOG_LEVEL` | `info` | 로그 레벨 |
 
-## Offline Deployment
+## CLI 명령어
 
-1. Install dependencies: `npm install`
-2. Build: `npm run build`
-3. (Optional) Download embedding model for offline use
-4. Import documentation bundles
-5. Deploy the `dist/`, `node_modules/`, and `data/` directories
+| 명령어 | 설명 |
+|--------|------|
+| `molicore import <dir>` | 문서 번들 import |
+| `molicore import <dir> --no-embeddings` | 임베딩 없이 import |
+| `molicore list` | 등록된 라이브러리 목록 |
+| `molicore search <query> --library <id>` | 문서 검색 |
+| `molicore serve --stdio` | stdio MCP 서버 시작 |
+| `molicore serve --http --port 3000` | HTTP MCP 서버 시작 |
 
-The server requires no internet access after setup.
+## MCP 도구
 
-## Architecture
+| 도구 | 설명 |
+|------|------|
+| `list_libraries` | 사용 가능한 라이브러리 목록 |
+| `resolve_library` | 이름/별칭 → 표준 라이브러리 ID 변환 |
+| `list_topics` | 라이브러리의 섹션 목록 |
+| `search_docs` | 필터가 있는 하이브리드 검색 |
+| `get_doc_section` | 특정 섹션 내용 조회 |
+| `get_relevant_context` | 컨텍스트에 맞는 관련 문서 검색 |
 
-```
-┌─────────────────────────────────────────────┐
-│                MCP Transport                 │
-│              (stdio / HTTP)                  │
-├─────────────────────────────────────────────┤
-│  Tools │ Resources │ Prompts                 │
-├─────────────────────────────────────────────┤
-│            Hybrid Search (RRF)               │
-│         FTS5 + Vector (optional)             │
-├─────────────────────────────────────────────┤
-│         SQLite (better-sqlite3)              │
-│    FTS5 Index │ sqlite-vec │ Metadata        │
-├─────────────────────────────────────────────┤
-│          Ingestion Pipeline                  │
-│    Parse → Chunk → Embed → Store             │
-└─────────────────────────────────────────────┘
-```
-
-## Development
+## 패키징 (오프라인 배포)
 
 ```bash
-npm run build          # Compile TypeScript
-npm run dev            # Watch mode
-npm test               # Run all tests
-npm run test:unit      # Unit tests only
-npm run test:integration  # Integration tests
-npm run typecheck      # Type checking only
+./package.sh
+# → moli-core-v1.0.0.tar.gz 생성
 ```
 
-## License
+오프라인 환경에서:
+
+```bash
+tar xzf moli-core-v1.0.0.tar.gz
+cd moli-core
+node dist/cli.js serve --http --port 3000
+```
+
+## 라이선스
 
 MIT
